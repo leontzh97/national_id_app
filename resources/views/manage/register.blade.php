@@ -21,21 +21,21 @@
               <div class="form-group">
                 <label for="race"><strong>Race</strong></label>
                 <select id="race" class="form-control" name="race">
-                  <option value="cn" name="race">Chinese</option>
-                  <option value="in" name="race">Indian</option>
-                  <option value="my" name="race">Malay</option>
+                  <option value="cn">Chinese</option>
+                  <option value="in">Indian</option>
+                  <option value="my">Malay</option>
                   <option value="ot">Other</option>
                 </select>
-                <input id="other" type="text" class="form-control" name="race" placeholder="Enter race here..." style="display:none;">
+                <input id="other" type="text" class="form-control" name="race" placeholder="Enter race here..." disabled style="display:none;">
               </div>
               <div class="form-group">
                 <label for="gender"><strong>Gender</strong></label>
                 <div class="form-check">
-                  <input type="radio" class="form-check-input" name="gender">
+                  <input type="radio" class="form-check-input" name="gender" value="M">
                   <label class="form-check-label" for="gender"><strong>Male</strong></label>
                 </div>
                 <div class="form-check">
-                  <input type="radio" class="form-check-input" name="gender">
+                  <input type="radio" class="form-check-input" name="gender" value="F">
                   <label class="form-check-label" for="gender"><strong>Female</strong></label>
                 </div>
               </div>
@@ -55,8 +55,9 @@
                 <div class="form-group col-md-4">
                   <label for="state"><strong>State</strong></label>
                   <select name="state" class="form-control">
-                    <option selected>Choose...</option>
-                    <option>...</option>
+                    @foreach(config('settings.state.all') as $k => $v)
+                        <option value="{{ $k }}" @if($field['state'] == $k) selected @endif>{{ $v }}</option>
+                    @endforeach
                   </select>
                 </div>
                 <div class="form-group col-md-2">
@@ -71,7 +72,7 @@
               <label for="nric"><strong>NRIC</strong></label>
               <div class="form-row">
                 <div class="form-group col-md-10">
-                  <input type="text" class="form-control" name="nric" placeholder="Generate NRIC here..." readonly required>
+                  <input type="text" class="form-control" name="nric" placeholder="Generate NRIC here..." value="123" readonly required>
                 </div>
                 <div class="form-group col-md-2">
                   <button class="form-control btn btn-success">Generate</button>
@@ -85,8 +86,9 @@
                   <label for="license"><strong>Driving License</strong></label>
                 </div>
                 <select name="license" class="form-control license">
-                  <option selected>Choose...</option>
-                  <option>...</option>
+                  @foreach(config('settings.license.all') as $k)
+                      <option value="{{ $k }}" @if($field['license'] == $k) selected @endif>{{ $k }}</option>
+                  @endforeach
                 </select>
               </div>
               <div class="form-group">
@@ -108,9 +110,11 @@ $(document).ready(function(){
 
   $('#race').on('change',function(){
     if($('#race option:selected').val() == 'ot'){
+      $('#other').attr('disabled', false);
       $('#other').show();
     }
     else{
+      $('#other').attr('disabled', true);
       $('#other').hide();
     }
   })

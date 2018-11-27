@@ -27,6 +27,11 @@ class CitizenController extends Controller
         $action = $request->action;
         return view('manage.register',[
           'action' => $action
+        ])->with([
+          'field' => [
+            'state' => $request->state,
+            'license' => $request->license
+          ]
         ]);
     }
 
