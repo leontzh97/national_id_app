@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+use App\Citizenship;
+use Carbon\Carbon;
+
 class CitizenController extends Controller
 {
     /**
@@ -65,7 +68,33 @@ class CitizenController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        foreach(config('settings.state.all') as $k => $v){
+          if($request->state == $k){
+            $state = $v;
+          }
+        };
+
+
+        $dob = Carbon::parse($request->dob)->format('ymd');
+        $nric = Citizenship::generateNewNRIC($dob,$request->state,$request->gender);
+
+        $address = $request->address.','.$request->address2.','.$request->zip.' '.$request->city.','.$state;
+
+        $postField = [
+          'name' => $request->name,
+          'email' => $request->email,
+          'race' => $request->race,
+          'gender' => $request->gender,
+          'address' => $address,
+          'date_of_birth' => $request->dob,
+          'nric' => $nric,
+          'driving_license' => ($request->license) ? $request->license : null,
+          'driver_expiry_date' => ($request->expiry_date) ? $request->expiry_date : null
+        ];
+
+        Citizenship::saveNewCitizen($postField);
+
+        return redirect()->back()->with('success', 'Citizen has been created');
     }
 
     /**

@@ -3,11 +3,17 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
+      @if(session('success'))
+      <div class="alert alert-success" role="alert">
+        {{ session('success') }}
+      </div>
+      @endif
       <div class="col-md-12">
         <h1>{{ $action }} Citizen</h1>
       </div>
       <div class="col-md-12">
-        <form id="registration" method="post" action="">
+        <form id="registration" method="post" action="{{ route('nric.store') }}">
+          @csrf
           <div class="card">
             <div class="card-body bg-light">
               <div class="form-group">
@@ -54,7 +60,7 @@
                 </div>
                 <div class="form-group col-md-4">
                   <label for="state"><strong>State</strong></label>
-                  <select name="state" class="form-control">
+                  <select id="state" name="state" class="form-control">
                     @foreach(config('settings.state.all') as $k => $v)
                         <option value="{{ $k }}" @if($field['state'] == $k) selected @endif>{{ $v }}</option>
                     @endforeach
@@ -67,16 +73,7 @@
               </div>
               <div class="form-group">
                 <label for="dob"><strong>Date Of Birth</strong></label>
-                <input type="date" class="form-control" name="dob" min="1940-01-01" max="2030-12-31" required>
-              </div>
-              <label for="nric"><strong>NRIC</strong></label>
-              <div class="form-row">
-                <div class="form-group col-md-10">
-                  <input type="text" class="form-control" name="nric" placeholder="Generate NRIC here..." value="123" readonly required>
-                </div>
-                <div class="form-group col-md-2">
-                  <button class="form-control btn btn-success">Generate</button>
-                </div>
+                <input id="dob" type="date" class="form-control" name="dob" min="1940-01-01" max="2030-12-31" required>
               </div>
             </div>
             <div class="card-footer">

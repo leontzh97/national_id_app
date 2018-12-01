@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class Citizenship extends Migration
+class Citizenships extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class Citizenship extends Migration
      */
     public function up()
     {
-      Schema::create('citizenship', function (Blueprint $table) {
+      Schema::create('citizenships', function (Blueprint $table) {
         $table->increments('id');
         $table->string('name')->unique();
         $table->string('email')->unique()->nullable();
@@ -36,6 +36,6 @@ class Citizenship extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('citizenship');
+        Schema::dropIfExists('citizenships');
     }
 }
