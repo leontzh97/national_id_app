@@ -16,7 +16,8 @@ class Citizenship extends Model
    */
   protected $fillable = [
       'name', 'email', 'nric', 'race', 'gender',
-      'address', 'date_of_birth', 'driving_license', 'driver_expiry_date'
+      'address_1', 'address_2', 'city', 'state', 'zip',
+      'date_of_birth', 'driving_license', 'driver_expiry_date'
   ];
 
   /**
@@ -33,7 +34,11 @@ class Citizenship extends Model
         'nric' => $data['nric'],
         'race' => $data['race'],
         'gender' => $data['gender'],
-        'address' => $data['address'],
+        'address_1' => $data['address_1'],
+        'address_2' => $data['address_2'],
+        'city' => $data['city'],
+        'state' => $data['state'],
+        'zip' => $data['zip'],
         'date_of_birth' => $data['date_of_birth'],
         'driving_license' => $data['driving_license'],
         'driver_expiry_date' => $data['driver_expiry_date']

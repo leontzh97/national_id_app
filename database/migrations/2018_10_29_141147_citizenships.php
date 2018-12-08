@@ -20,7 +20,11 @@ class Citizenships extends Migration
         $table->string('nric')->unique();
         $table->string('race');
         $table->string('gender');
-        $table->string('address', 500)->nullable();
+        $table->string('address_1', 500);
+        $table->string('address_2', 500)->nullable();
+        $table->string('city');
+        $table->string('state');
+        $table->integer('zip')->unsigned();
         $table->timestamp('date_of_birth');
         $table->string('driving_license')->nullable();
         $table->timestamp('driver_expiry_date')->nullable();

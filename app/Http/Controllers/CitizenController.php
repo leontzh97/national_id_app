@@ -47,15 +47,18 @@ class CitizenController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|string|max:255|unique:citizenship',
-            'email' => 'required|string|email|max:255|unique:citizenship',
-            'nric' => 'required|digits:12|max:255|unique:citizenship',
+            'name' => 'required|string|max:255|unique:citizenships',
+            'email' => 'required|string|email|max:255|unique:citizenships',
             'race' => 'required|string|max:255',
             'gender' => 'required|string|max:255',
-            'address' => 'string|max:500',
-            'date_of_birth' => 'required|date|max:255',
-            'driving_license' => 'string|max:255',
-            'driver_expiry_date' => 'date|max:255',
+            'address' => 'required|string|max:500',
+            'address2' => 'string|max:500',
+            'city' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+            'zip' => 'required|integer',
+            'dob' => 'required|date|max:255',
+            'license' => 'string|max:255',
+            'expiry_date' => 'date|max:255',
         ]);
 
     }
@@ -68,33 +71,47 @@ class CitizenController extends Controller
      */
     public function store(Request $request)
     {
-        foreach(config('settings.state.all') as $k => $v){
-          if($request->state == $k){
-            $state = $v;
-          }
-        };
+        $validation = self::validator($request->all());
 
+        if($validation->fails()){
+          return redirect()->back()->withInput()->withErrors($validation->errors());
+        }
+        else{
 
-        $dob = Carbon::parse($request->dob)->format('ymd');
-        $nric = Citizenship::generateNewNRIC($dob,$request->state,$request->gender);
+          foreach(config('settings.state.all') as $k => $v){
+            if($request->state == $k){
+              $state = $v;
+            }
+          };
 
-        $address = $request->address.','.$request->address2.','.$request->zip.' '.$request->city.','.$state;
+          $dob = Carbon::parse($request->dob)->format('ymd');
+          $nric = Citizenship::generateNewNRIC($dob,$request->state,$request->gender);
 
-        $postField = [
-          'name' => $request->name,
-          'email' => $request->email,
-          'race' => $request->race,
-          'gender' => $request->gender,
-          'address' => $address,
-          'date_of_birth' => $request->dob,
-          'nric' => $nric,
-          'driving_license' => ($request->license) ? $request->license : null,
-          'driver_expiry_date' => ($request->expiry_date) ? $request->expiry_date : null
-        ];
+          $postField = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'race' => $request->race,
+            'gender' => $request->gender,
+            'address_1' => $request->address,
+            'address_2' => $request->address2,
+            'city' => $request->city,
+            'state' => $state,
+            'zip' => $request->zip,
+            'date_of_birth' => $request->dob,
+            'nric' => $nric,
+            'driving_license' => ($request->license) ? $request->license : null,
+            'driver_expiry_date' => ($request->expiry_date) ? $request->expiry_date : null
+          ];
 
-        Citizenship::saveNewCitizen($postField);
+          Citizenship::saveNewCitizen($postField);
 
-        return redirect()->back()->with('success', 'Citizen has been created');
+          return redirect()->back()->with([
+            'success' => 'Citizen has been created',
+            'nric' => $nric,
+          ]);
+        }
+
+        return redirect()->back()->with('fail', 'Server error');
     }
 
     /**
@@ -116,10 +133,15 @@ class CitizenController extends Controller
      */
     public function edit(Request $request)
     {
-        $action = $request->action;
-        return view('manage.update',[
-          'action' => $action
-        ]);
+      $action = $request->action;
+      return view('manage.update',[
+        'action' => $action
+      ])->with([
+        'field' => [
+          'state' => $request->state,
+          'license' => $request->license
+        ]
+      ]);
     }
 
     /**
