@@ -12,13 +12,14 @@
     <title>{{ config('app.name', 'National ID') }}</title>
     <!-- Scripts -->
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
-    <script src="{{ asset('js/coreui.min.js') }}"></script>
     <script src="{{ asset('js/popper.min.js') }}"></script>
+    <script src="{{ asset('js/coreui.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
     <!-- Fonts -->
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('css/coreui.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}">
 </head>
 <body>
     <div id="app">
@@ -27,6 +28,7 @@
             @yield('content')
             <script src="{{ asset('js/validation/jquery.validate.min.js') }}"></script>
             <script src="{{ asset('js/validation/additional-methods.min.js') }}"></script>
+            <script src="{{ asset('js/select2.min.js') }}"></script>
         </main>
     </div>
 </body>

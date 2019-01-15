@@ -30,11 +30,6 @@ class CitizenController extends Controller
         $action = $request->action;
         return view('manage.register',[
           'action' => $action
-        ])->with([
-          'field' => [
-            'state' => $request->state,
-            'license' => $request->license
-          ]
         ]);
     }
 
@@ -79,13 +74,13 @@ class CitizenController extends Controller
         else{
 
           foreach(config('settings.state.all') as $k => $v){
-            if($request->state == $k){
-              $state = $v;
+            if($request->state == $v){
+              $state = $k;
             }
           };
 
           $dob = Carbon::parse($request->dob)->format('ymd');
-          $nric = Citizenship::generateNewNRIC($dob,$request->state,$request->gender);
+          $nric = Citizenship::generateNewNRIC($dob,$state,$request->gender);
 
           $postField = [
             'name' => $request->name,
@@ -95,7 +90,7 @@ class CitizenController extends Controller
             'address_1' => $request->address,
             'address_2' => $request->address2,
             'city' => $request->city,
-            'state' => $state,
+            'state' => $request->state,
             'zip' => $request->zip,
             'date_of_birth' => $request->dob,
             'nric' => $nric,
@@ -136,11 +131,6 @@ class CitizenController extends Controller
       $action = $request->action;
       return view('manage.update',[
         'action' => $action
-      ])->with([
-        'field' => [
-          'state' => $request->state,
-          'license' => $request->license
-        ]
       ]);
     }
 
@@ -165,5 +155,18 @@ class CitizenController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Load all wallet address
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function loadAllCitizen(Request $request)
+    {
+        return Citizenship::where('nric', 'LIKE', ('%'.$request->q.'%'))
+                ->orWhere('name', 'LIKE', ('%'.$request->q.'%'))
+                ->orderBy('name', 'asc')
+                ->paginate(10);
     }
 }

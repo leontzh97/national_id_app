@@ -21,6 +21,15 @@ class Citizenship extends Model
   ];
 
   /**
+   * The attributes that are hidden.
+   *
+   * @var array
+   */
+  protected $hidden = [
+      'remember_token', 'created_at' ,'updated_at'
+  ];
+
+  /**
    * Create a new citizen instance after a valid registration.
    *
    * @param  array  $data

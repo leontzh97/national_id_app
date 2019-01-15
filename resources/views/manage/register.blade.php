@@ -97,7 +97,7 @@
                   <label for="state"><strong>State</strong></label>
                   <select id="state" name="state" class="form-control {{ ($errors->has('state')) ? 'is-invalid' : '' }}">
                     @foreach(config('settings.state.all') as $k => $v)
-                        <option value="{{ $k }}" @if($field['state'] == $k) selected @endif {{ (old('state') == $k) ? 'selected' : ''}}>{{ $v }}</option>
+                        <option value="{{ $v }}" {{ (old('state') == $k) ? 'selected' : ''}}>{{ $v }}</option>
                     @endforeach
                   </select>
                   @if ($errors->has('state'))
@@ -134,7 +134,7 @@
                 </div>
                 <select name="license" class="form-control license {{ ($errors->has('license')) ? 'is-invalid' : '' }}">
                   @foreach(config('settings.license.all') as $k)
-                      <option value="{{ $k }}" @if($field['license'] == $k) selected @endif {{ (old('license') == $k) ? 'selected' : ''}}>{{ $k }}</option>
+                      <option value="{{ $k }}" {{ (old('license') == $k) ? 'selected' : ''}}>{{ $k }}</option>
                   @endforeach
                 </select>
                 @if ($errors->has('license'))
@@ -164,7 +164,6 @@
 
 <script>
 $(document).ready(function(){
-  console.log("{{ $errors }}");
 
   $('#race').on('change',function(){
     if($('#race option:selected').val() == 'ot'){

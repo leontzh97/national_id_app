@@ -17,26 +17,21 @@
         <h1>{{ $action }} Citizen</h1>
       </div>
       <div class="col-md-12">
-        <form id="registration" method="post" action="{{ route('nric.store') }}">
+        <form id="registration" method="post" action="{{ route('nric.update') }}">
           @csrf
           <div class="card">
             <div class="card-body bg-light">
               <div class="form-group">
                 <label for="nric"><strong>NRIC</strong></label>
-                <select id="nric" name="nric" class="form-control"></select>
+                <select id="nric" name="nric" class="form-control" style="width:100%"></select>
               </div>
               <div class="form-group">
                 <label for="name"><strong>Name</strong></label>
-                <input type="text" class="form-control {{ ($errors->has('name')) ? 'is-invalid' : '' }}" name="name" value="{{ old('name') }}" placeholder="Enter name here..." required>
-                @if ($errors->has('name'))
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $errors->first('name') }}</strong>
-                    </span>
-                @endif
+                <input id="name" type="text" class="form-control" name="name" readonly>
               </div>
               <div class="form-group">
                 <label for="email"><strong>Email</strong></label>
-                <input type="email" class="form-control {{ ($errors->has('email')) ? 'is-invalid' : '' }}" name="email" value="{{ old('email') }}" placeholder="Enter email here...">
+                <input id="email" type="email" class="form-control {{ ($errors->has('email')) ? 'is-invalid' : '' }}" name="email" value="{{ old('email') }}" placeholder="Enter email here...">
                 @if ($errors->has('email'))
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $errors->first('email') }}</strong>
@@ -45,33 +40,28 @@
               </div>
               <div class="form-group">
                 <label for="race"><strong>Race</strong></label>
-                <select id="race" class="form-control {{ ($errors->has('race')) ? 'is-invalid' : '' }}" name="race">
+                <select id="race" class="form-control" name="race" readonly>
                   <option value="cn" {{ (old('race') == 'cn') ? 'selected' : ''}}>Chinese</option>
                   <option value="in" {{ (old('race') == 'in') ? 'selected' : ''}}>Indian</option>
                   <option value="my" {{ (old('race') == 'my') ? 'selected' : ''}}>Malay</option>
                   <option value="ot" {{ (old('race') == 'ot') ? 'selected' : ''}}>Other</option>
                 </select>
-                <input id="other" type="text" class="form-control" name="race" placeholder="Enter race here..." value="{{ old('race') }}" disabled style="display:none;">
-                @if ($errors->has('race'))
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $errors->first('race') }}</strong>
-                    </span>
-                @endif
+                <input id="other" type="text" class="form-control" name="race" disabled readonly style="display:none;">
               </div>
               <div class="form-group">
                 <label for="gender"><strong>Gender</strong></label>
                 <div class="form-check">
-                  <input type="radio" class="form-check-input" name="gender" value="M" {{ (old('gender') == 'M') ? 'checked' : ''}} checked>
+                  <input id="male" type="radio" class="form-check-input" name="gender" value="M" readonly>
                   <label class="form-check-label" for="gender"><strong>Male</strong></label>
                 </div>
                 <div class="form-check">
-                  <input type="radio" class="form-check-input" name="gender" value="F" {{ (old('gender') == 'M') ? 'checked' : ''}}>
+                  <input id="female" type="radio" class="form-check-input" name="gender" value="F" readonly>
                   <label class="form-check-label" for="gender"><strong>Female</strong></label>
                 </div>
               </div>
               <div class="form-group">
                 <label for="address"><strong>Address 1</strong></label>
-                <input type="text" class="form-control {{ ($errors->has('address')) ? 'is-invalid' : '' }}" name="address" placeholder="Enter address 1 here..." value="{{ old('address') }}">
+                <input id="address" type="text" class="form-control {{ ($errors->has('address')) ? 'is-invalid' : '' }}" name="address" value="{{ old('address') }}">
                 @if ($errors->has('address'))
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $errors->first('address') }}</strong>
@@ -80,7 +70,7 @@
               </div>
               <div class="form-group">
                 <label for="address2"><strong>Address 2</strong></label>
-                <input type="text" class="form-control {{ ($errors->has('address2')) ? 'is-invalid' : '' }}" name="address2" placeholder="Enter address 2 here..." value="{{ old('address2') }}">
+                <input id="address2" type="text" class="form-control {{ ($errors->has('address2')) ? 'is-invalid' : '' }}" name="address2" value="{{ old('address2') }}">
                 @if ($errors->has('address2'))
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $errors->first('address2') }}</strong>
@@ -90,7 +80,7 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="city"><strong>City</strong></label>
-                  <input type="text" class="form-control {{ ($errors->has('city')) ? 'is-invalid' : '' }}" name="city" value="{{ old('city') }}">
+                  <input id="city" type="text" class="form-control {{ ($errors->has('city')) ? 'is-invalid' : '' }}" name="city" value="{{ old('city') }}">
                   @if ($errors->has('city'))
                       <span class="invalid-feedback" role="alert">
                           <strong>{{ $errors->first('city') }}</strong>
@@ -101,7 +91,7 @@
                   <label for="state"><strong>State</strong></label>
                   <select id="state" name="state" class="form-control {{ ($errors->has('state')) ? 'is-invalid' : '' }}">
                     @foreach(config('settings.state.all') as $k => $v)
-                        <option value="{{ $k }}" @if($field['state'] == $k) selected @endif {{ (old('state') == $k) ? 'selected' : ''}}>{{ $v }}</option>
+                        <option value="{{ $v }}" {{ (old('state') == $k) ? 'selected' : ''}}>{{ $v }}</option>
                     @endforeach
                   </select>
                   @if ($errors->has('state'))
@@ -112,7 +102,7 @@
                 </div>
                 <div class="form-group col-md-2">
                   <label for="zip"><strong>Zip</strong></label>
-                  <input type="text" class="form-control {{ ($errors->has('zip')) ? 'is-invalid' : '' }}" name="zip" value="{{ old('zip') }}">
+                  <input id="zip" type="text" class="form-control {{ ($errors->has('zip')) ? 'is-invalid' : '' }}" name="zip" value="{{ old('zip') }}">
                   @if ($errors->has('zip'))
                       <span class="invalid-feedback" role="alert">
                           <strong>{{ $errors->first('zip') }}</strong>
@@ -122,12 +112,7 @@
               </div>
               <div class="form-group">
                 <label for="dob"><strong>Date Of Birth</strong></label>
-                <input id="dob" type="date" class="form-control {{ ($errors->has('dob')) ? 'is-invalid' : '' }}" name="dob" min="1940-01-01" max="2030-12-31" value="{{ old('dob') }}" required>
-                @if ($errors->has('dob'))
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $errors->first('dob') }}</strong>
-                    </span>
-                @endif
+                <input id="dob" type="date" class="form-control {{ ($errors->has('dob')) ? 'is-invalid' : '' }}" name="dob" min="1940-01-01" max="2030-12-31" readonly>
               </div>
             </div>
             <div class="card-footer">
@@ -136,9 +121,9 @@
                   <input class="form-check-input" type="checkbox" id="is_check" checked>
                   <label for="license"><strong>Driving License</strong></label>
                 </div>
-                <select name="license" class="form-control license {{ ($errors->has('license')) ? 'is-invalid' : '' }}">
+                <select id="driving" name="license" class="form-control license {{ ($errors->has('license')) ? 'is-invalid' : '' }}">
                   @foreach(config('settings.license.all') as $k)
-                      <option value="{{ $k }}" @if($field['license'] == $k) selected @endif {{ (old('license') == $k) ? 'selected' : ''}}>{{ $k }}</option>
+                      <option value="{{ $k }}" {{ (old('license') == $k) ? 'selected' : ''}}>{{ $k }}</option>
                   @endforeach
                 </select>
                 @if ($errors->has('license'))
@@ -149,7 +134,7 @@
               </div>
               <div class="form-group">
                 <label for="expiry_date"><strong>Exipiry Date</strong></label>
-                <input type="date" class="form-control license {{ ($errors->has('expiry_date')) ? 'is-invalid' : '' }}" name="expiry_date" min="1940-01-01" max="2030-12-31" value="{{ old('expiry_date') }}" required>
+                <input id="expiry_date" type="date" class="form-control license {{ ($errors->has('expiry_date')) ? 'is-invalid' : '' }}" name="expiry_date" min="1940-01-01" max="2030-12-31" value="{{ old('expiry_date') }}" required>
                 @if ($errors->has('expiry_date'))
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $errors->first('expiry_date') }}</strong>
@@ -168,7 +153,6 @@
 
 <script>
 $(document).ready(function(){
-  console.log("{{ $errors }}");
 
   $('#race').on('change',function(){
     if($('#race option:selected').val() == 'ot'){
@@ -212,6 +196,103 @@ $(document).ready(function(){
 
   });
 
+  $('#nric').select2({
+      ajax : {
+          url : "{{ route('nric.load-citizen') }}",
+          dataType : 'json',
+          type: "POST",
+          delay : 200,
+          data : function(params){
+              return {
+                  q : params.term,
+                  page : params.page,
+                  _token: $('meta[name="csrf-token"]').attr('content')
+              };
+          },
+          processResults : function(data, params){
+              params.page = params.page || 1;
+              return {
+                  results : data.data,
+                  pagination: {
+                      more : (params.page  * 10) < data.total
+                  }
+              };
+          }
+      },
+      templateResult : function (data)
+      {
+        if(data.nric){
+          return data.nric + ' :: ' + data.name;
+        }
+      },
+      templateSelection : function(data)
+      {
+        if(data.nric){
+          return data.nric + ' :: ' + data.name;
+        }
+      },
+      escapeMarkup : function(markup){ return markup; }
+  });
+
+  $('#nric').on('change',function(){
+    let data = $('#nric').select2('data');
+
+    let dob = new Date(data[0].date_of_birth);
+    var m = dob.getMonth() + 1;
+    var d = dob.getDate();
+    var y = dob.getFullYear();
+    if(m < 10){
+      m = '0'+m;
+    }
+    if(d < 10){
+      d = '0'+d;
+    }
+    var date = y + '-' + m + '-' + d;
+
+    $('#name').val(data[0].name);
+    $('#email').val(data[0].email);
+    $('#address').val(data[0].address_1);
+    $('#address2').val(data[0].address_2);
+    $('#city').val(data[0].city);
+    $('#state').val(data[0].state).trigger('change');
+    $('#zip').val(data[0].zip);
+    $('#dob').val(date);
+    if(data[0].driving_license){
+      $('#is_check').attr('checked',true).trigger('change');
+      $('#driving').val(data[0].driving_license).trigger('change');
+      let expiry = new Date(data[0].driver_expiry_date);
+      var mm = expiry.getMonth() + 1;
+      var dd = expiry.getDate();
+      var yy = expiry.getFullYear();
+      if(mm < 10){
+        mm = '0'+mm;
+      }
+      if(dd < 10){
+        dd = '0'+dd;
+      }
+      var dt = yy + '-' + mm + '-' + dd;
+      $('#expiry_date').val(dt);
+    }
+    else {
+      $('#is_check').attr('checked',false).trigger('change');
+    }
+    if(data[0].gender == 'M'){
+      $('#male').attr('checked', true);
+    }
+    else {
+      $('#female').attr('checked', true);
+    }
+    if(data[0].race == 'my' || data[0].race == 'cn' || data[0].race == 'in'){
+      $('#race').trigger('change');
+      $('#race').val(data[0].race);
+    }
+    else{
+      $('#race').val('ot');
+      $('#race').trigger('change');
+      $('#other').val(data[0].race);
+    }
+
+  });
 })
 </script>
 @endsection
