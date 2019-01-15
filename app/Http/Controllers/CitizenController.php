@@ -141,9 +141,32 @@ class CitizenController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $id = Citizenship::where(['id' => $request->nric])->first();
+
+        if(!empty($id)){
+          $id->email = ($request->email) ? $request->email : $id->email;
+          $id->gender = ($request->gender) ? $request->gender : $id->gender;
+          $id->address_1 = ($request->address) ? $request->address : $id->address_1;
+          $id->address_2 = ($request->address2) ? $request->address2 : $id->address_2;
+          $id->city = ($request->city) ? $request->city : $id->city;
+          $id->state = ($request->state) ? $request->state : $id->state;
+          $id->zip = ($request->zip) ? $request->zip : $id->zip;
+
+          // if($id->driving_license == null){
+          //   $id->driving_license = ($request->license) ? $request->license : $id->null;
+          //   $id->driver_expiry_date = ($request->expiry_date) ? $request->expiry_date : null;
+          // }
+          // else{
+            $id->driving_license = ($request->license) ? $request->license : $id->driving_license;
+            $id->driver_expiry_date = ($request->expiry_date) ? $request->expiry_date : $id->driver_expiry_date;
+          // }
+
+          $id->save();
+
+          return redirect()->home();
+        }
     }
 
     /**

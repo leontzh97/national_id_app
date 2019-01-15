@@ -144,7 +144,7 @@
             </div>
           </div>
           <div class="col-md-12">
-            <button type="submit" value="{{ $action }}" class="float-right btn btn-primary">Save</button>
+            <button type="submit" value="{{ $action }}" class="float-right btn btn-success">Update</button>
           </div>
         </form>
       </div>
