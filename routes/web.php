@@ -20,3 +20,4 @@ Route::get('/national-id/update', 'CitizenController@edit')->name('nric.update')
 Route::post('/national-id/store', 'CitizenController@store')->name('nric.store');
 Route::post('/national-id/update', 'CitizenController@update')->name('nric.update');
 Route::post('/national-id/loadAllCitizen', 'CitizenController@loadallcitizen')->name('nric.load-citizen');
+Route::post('/national-id/listing', 'CitizenController@listing')->name('nric.listing');

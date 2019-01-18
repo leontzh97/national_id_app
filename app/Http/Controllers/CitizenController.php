@@ -153,15 +153,8 @@ class CitizenController extends Controller
           $id->city = ($request->city) ? $request->city : $id->city;
           $id->state = ($request->state) ? $request->state : $id->state;
           $id->zip = ($request->zip) ? $request->zip : $id->zip;
-
-          // if($id->driving_license == null){
-          //   $id->driving_license = ($request->license) ? $request->license : $id->null;
-          //   $id->driver_expiry_date = ($request->expiry_date) ? $request->expiry_date : null;
-          // }
-          // else{
-            $id->driving_license = ($request->license) ? $request->license : $id->driving_license;
-            $id->driver_expiry_date = ($request->expiry_date) ? $request->expiry_date : $id->driver_expiry_date;
-          // }
+          $id->driving_license = ($request->license) ? $request->license : $id->driving_license;
+          $id->driver_expiry_date = ($request->expiry_date) ? $request->expiry_date : $id->driver_expiry_date;
 
           $id->save();
 
@@ -170,14 +163,41 @@ class CitizenController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Show the listing
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function listing(Request $request)
     {
-        //
+        if($request->ajax()){
+          $filter = Citizenship::setDataTableFilter($request->all());
+          $totalInDB = Citizenship::findCitizenListingWithFilter([], 'count');
+          $totalFiltered = Citizenship::findCitizenListingWithFilter(['searchValue' => $filter['searchValue']], 'count');
+          $list = Citizenship::displayCitizenTable($filter);
+
+          $recordsTotal = is_object($totalInDB) ? 0 :$totalInDB;
+
+          if(is_object($totalFiltered))
+          {
+              $recordsFiltered = 0;
+          }
+          else
+          {
+              $recordsFiltered = (! empty($filter['searchValue'])) ? $totalFiltered : $recordsTotal;
+          }
+
+          $pageResult = [
+            'draw'              => $filter['draw'],
+            'recordsTotal'      => $recordsTotal,
+            'recordsFiltered'   => $recordsFiltered,
+            'start'             => $filter['offset'],
+            'data'              => $list,
+            'length'            => $filter['limit'],
+            'searchValue'       => $filter['searchValue']
+          ];
+
+          return response()->json($pageResult);
+        }
     }
 
     /**

@@ -92,4 +92,97 @@ class Citizenship extends Model
 
       return self::generateNewNRIC($dob, $state, $gender);
   }
+
+  /**
+   *
+   * Set table filter
+   *
+   */
+  protected function setDataTableFilter($request)
+  {
+      $draw = $request['draw'];
+      $start = $request['start'];
+      $limit = $request['length'];
+
+      $sort = $request['order'][0]['dir'];
+      $sortIndex = $request['order'][0]['column'];
+      $sortName = $request['columns'][$sortIndex]['name'];
+      $searchValue = $request['search']['value'];
+
+      return [
+          'draw'          => $draw,
+          'limit'         => $limit,
+          'offset'        => $start,
+          'sortName'      => $sortName,
+          'sort'          => $sort,
+          'searchValue'   => $searchValue
+      ];
+
+  }
+
+  /**
+   * Display for user table
+   *
+   * @param array $filter
+   * @return array
+   */
+  protected function displayCitizenTable($filter)
+  {
+     $display = [];
+     $listing = self::findCitizenListingWithFilter($filter);
+
+     if(! empty($listing))
+     {
+         foreach($listing as $value)
+         {
+             array_push($display, [
+                 'id'                => $value->id,
+                 'name'              => $value->name,
+                 'email'             => $value->email,
+                 'nric'              => $value->nric,
+             ]);
+         }
+     }
+
+     return $display;
+   }
+
+   /**
+    * Find user listing with filter
+    *
+    * @param array $filter
+    * @param string $type [count / get]
+    * @return array
+    */
+   protected function findCitizenListingWithFilter($filter, $type='get')
+   {
+       $searchValue = array_key_exists('searchValue', $filter) ? $filter['searchValue'] : null;
+       $sortBy = array_key_exists('sortName', $filter) ? $filter['sortName'] : null;
+       $sort = array_key_exists('sort', $filter) ? $filter['sort'] : null;
+       $limit = array_key_exists('limit', $filter) ? $filter['limit'] : null;
+       $offset = array_key_exists('offset', $filter) ? $filter['offset'] : null;
+
+       return DB::table('citizenships')
+               ->select('citizenships.id', 'citizenships.name', 'citizenships.nric', 'citizenships.email')
+               ->when($searchValue, function($query, $searchValue) {
+                   return $query->where('citizenships.id', 'LIKE', ('%'.$searchValue.'%'))
+                                ->orWhere('citizenships.name', 'LIKE', ('%'.$searchValue.'%'))
+                                ->orWhere('citizenships.nric', 'LIKE', ('%'.$searchValue.'%'))
+                                ->orWhere('citizenships.email', 'LIKE', ('%'.$searchValue.'%'));
+               })
+               ->when($sortBy, function($query, $sortBy) use ($sort) {
+                   return $query->orderBy($sortBy, $sort);
+               })
+               ->when($limit, function($query, $limit) {
+                   return $query->limit($limit);
+               })
+               ->when($offset, function($query, $offset) {
+                   return $query->offset($offset);
+               })
+               ->when($type == 'count', function($query, $type) {
+                   return $query->count();
+               }, function($query) {
+                   return $query->get();
+               });
+   }
 }

@@ -18,6 +18,7 @@
     <!-- Fonts -->
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     <!-- Styles -->
+    <link href="{{ asset('js/data-tables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/coreui.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}">
 </head>
@@ -28,6 +29,8 @@
             @yield('content')
             <script src="{{ asset('js/validation/jquery.validate.min.js') }}"></script>
             <script src="{{ asset('js/validation/additional-methods.min.js') }}"></script>
+            <script src="{{ asset('js/data-tables/jquery.dataTables.min.js') }}"></script>
+            <script src="{{ asset('js/data-tables/dataTables.bootstrap4.min.js') }}"></script>
             <script src="{{ asset('js/select2.min.js') }}"></script>
         </main>
     </div>
