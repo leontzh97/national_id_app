@@ -18,6 +18,7 @@
               <th scope="col">Name</th>
               <th scope="col">Email Address</th>
               <th scope="col">NRIC</th>
+              <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody style="background-color:white;"></tbody>
@@ -47,6 +48,7 @@ $(document).ready(function() {
             { 'data': 'name', 'name': 'name' },
             { 'data': 'email', 'name': 'email' },
             { 'data': 'nric', 'name': 'nric' },
+            { 'data': 'action', 'defaultContent': '', 'orderable': false, 'searchable': false }
         ]
     });
 

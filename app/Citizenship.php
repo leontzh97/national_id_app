@@ -140,6 +140,7 @@ class Citizenship extends Model
                  'name'              => $value->name,
                  'email'             => $value->email,
                  'nric'              => $value->nric,
+                 'action'            => '<button onClick="window.location.href=\''.route('nric.view',['id' => $value->id]).'\' " class="btn btn-ghost-primary"><i class="fa fa-eye"></i> View</button>'
              ]);
          }
      }

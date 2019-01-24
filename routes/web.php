@@ -17,6 +17,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 //National_ID
 Route::get('/national-id/register', 'CitizenController@create')->name('nric.register');
 Route::get('/national-id/update', 'CitizenController@edit')->name('nric.update');
+Route::get('/national-id/view', 'CitizenController@view')->name('nric.view');
 Route::post('/national-id/store', 'CitizenController@store')->name('nric.store');
 Route::post('/national-id/update', 'CitizenController@update')->name('nric.update');
 Route::post('/national-id/loadAllCitizen', 'CitizenController@loadallcitizen')->name('nric.load-citizen');

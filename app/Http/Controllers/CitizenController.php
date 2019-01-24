@@ -115,9 +115,13 @@ class CitizenController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function view(Request $request)
     {
-        //
+        $id = Citizenship::where(['id' => $request->id])->first();
+
+        return View('profile',[
+          'user' => $id
+        ]);
     }
 
     /**
