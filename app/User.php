@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -16,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username', 'password',
+        'username', 'password', 'role', 'citizen_id'
     ];
 
     /**
@@ -27,4 +28,27 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * Belongs to a citizen.
+     */
+    public function citizenship()
+    {
+        return $this->belongsTo('App\Citizenship');
+    }
+
+    /**
+     * Create a new user instance after a valid registration.
+     *
+     * @param $ic
+     * @return \App\Citizenship
+     */
+    protected function createNewUser($ic)
+    {
+        return User::create([
+          'username' => $ic,
+          'password' => Hash::make($ic),
+          'role' => 'citizen',
+        ]);
+    }
 }

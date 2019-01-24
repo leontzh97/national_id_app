@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 use Carbon\Carbon;
+use App\User;
 
 class Citizenship extends Model
 {
@@ -30,6 +31,14 @@ class Citizenship extends Model
   ];
 
   /**
+   * Has an user account.
+   */
+  public function user()
+  {
+      return $this->hasOne('App\User');
+  }
+
+  /**
    * Create a new citizen instance after a valid registration.
    *
    * @param  array  $data
@@ -37,6 +46,8 @@ class Citizenship extends Model
    */
   protected function saveNewCitizen($data)
   {
+      User::createNewUser($data['nric']);
+
       return Citizenship::create([
         'name' => $data['name'],
         'email' => $data['email'],
