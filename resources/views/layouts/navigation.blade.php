@@ -23,10 +23,10 @@
                     </li>
                 @else
                     <li class="nav-item dropdown">
+                        @if(Auth::user()->role == 'admin')
                         <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                             National ID <span class="caret"></span>
                         </a>
-
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="{{ route('nric.register',['action' => 'Register']) }}">
                                 Register
@@ -35,6 +35,9 @@
                                 Update
                             </a>
                         </div>
+                        @else
+                        <a class="nav-link" href="{{ route('nric.view',['id' => Auth::user()->citizen_id ]) }}">{{ __('My Profile') }}</a>
+                        @endif
                     </li>
                     <li class="nav-item dropdown">
                         <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
