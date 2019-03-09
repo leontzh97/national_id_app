@@ -222,75 +222,186 @@ $(document).ready(function(){
       templateResult : function (data)
       {
         if(data.nric){
-          return data.nric + ' :: ' + data.name;
+          return data.nric;
         }
       },
       templateSelection : function(data)
       {
         if(data.nric){
-          return data.nric + ' :: ' + data.name;
+          return data.nric;
         }
       },
       escapeMarkup : function(markup){ return markup; }
   });
 
+  var CitizenContract = web3.eth.contract(
+    {!! config('settings.contract.abi') !!}
+  );
+  var Citizen = CitizenContract.at('{{ config('settings.contract.block') }}');
+
+
   $('#nric').on('change',function(){
     let data = $('#nric').select2('data');
-
-    let dob = new Date(data[0].date_of_birth);
-    var m = dob.getMonth() + 1;
-    var d = dob.getDate();
-    var y = dob.getFullYear();
-    if(m < 10){
-      m = '0'+m;
-    }
-    if(d < 10){
-      d = '0'+d;
-    }
-    var date = y + '-' + m + '-' + d;
-
-    $('#name').val(data[0].name);
-    $('#email').val(data[0].email);
-    $('#address').val(data[0].address_1);
-    $('#address2').val(data[0].address_2);
-    $('#city').val(data[0].city);
-    $('#state').val(data[0].state).trigger('change');
-    $('#zip').val(data[0].zip);
-    $('#dob').val(date);
-    if(data[0].driving_license){
-      $('#is_check').attr('checked',true).trigger('change');
-      $('#driving').val(data[0].driving_license).trigger('change');
-      let expiry = new Date(data[0].driver_expiry_date);
-      var mm = expiry.getMonth() + 1;
-      var dd = expiry.getDate();
-      var yy = expiry.getFullYear();
-      if(mm < 10){
-        mm = '0'+mm;
+    Citizen.getDOB(web3.fromAscii(data[0].nric),function(error,result){
+      if(error){
+        console.error(error);
       }
-      if(dd < 10){
-        dd = '0'+dd;
+      else {
+        var dob = new Date(web3.toUtf8(result));
+        var m = dob.getMonth() + 1;
+        var d = dob.getDate();
+        var y = dob.getFullYear();
+        if(m < 10){
+          m = '0'+m;
+        }
+        if(d < 10){
+          d = '0'+d;
+        }
+        var date = y + '-' + m + '-' + d;
+        $('#dob').val(date);
+      }}
+    );
+
+    Citizen.getName(web3.fromAscii(data[0].nric),function(error,result){
+      if(error){
+        console.error(error);
       }
-      var dt = yy + '-' + mm + '-' + dd;
-      $('#expiry_date').val(dt);
-    }
-    else {
-      $('#is_check').attr('checked',false).trigger('change');
-    }
-    if(data[0].gender == 'M'){
-      $('#male').attr('checked', true);
-    }
-    else {
-      $('#female').attr('checked', true);
-    }
-    if(data[0].race == 'my' || data[0].race == 'cn' || data[0].race == 'in'){
-      $('#race').trigger('change');
-      $('#race').val(data[0].race);
-    }
-    else{
-      $('#race').val('ot');
-      $('#race').trigger('change');
-      $('#other').val(data[0].race);
-    }
+      else {
+        var name = web3.toUtf8(result);
+        $('#name').val(name);
+      }}
+    );
+
+    Citizen.getEmail(web3.fromAscii(data[0].nric),function(error,result){
+      if(error){
+        console.error(error);
+      }
+      else {
+        var email = web3.toUtf8(result);
+        $('#email').val(email);
+      }}
+    );
+
+    Citizen.getAddress1(web3.fromAscii(data[0].nric),function(error,result){
+      if(error){
+        console.error(error);
+      }
+      else {
+        var address_1 = web3.toUtf8(result);
+        $('#address').val(address_1);
+      }}
+    );
+
+    Citizen.getAddress2(web3.fromAscii(data[0].nric),function(error,result){
+      if(error){
+        console.error(error);
+      }
+      else {
+        var address_2 = web3.toUtf8(result);
+        $('#address2').val(address_2);
+      }}
+    );
+
+    Citizen.getCity(web3.fromAscii(data[0].nric),function(error,result){
+      if(error){
+        console.error(error);
+      }
+      else {
+        var city = web3.toUtf8(result);
+        $('#city').val(city);
+      }}
+    );
+
+    Citizen.getState(web3.fromAscii(data[0].nric),function(error,result){
+      if(error){
+        console.error(error);
+      }
+      else {
+        var state = web3.toUtf8(result);
+        $('#state').val(state).trigger('change');
+      }}
+    );
+
+    Citizen.getZIP(web3.fromAscii(data[0].nric),function(error,result){
+      if(error){
+        console.error(error);
+      }
+      else {
+        var zip = web3.toUtf8(result);
+        $('#zip').val(zip);
+      }}
+    );
+
+    Citizen.getDrivingLicense(web3.fromAscii(data[0].nric),function(error,result){
+      if(error){
+        console.error(error);
+      }
+      else {
+        console.log(web3.toUtf8(result));
+        var driving_license = web3.toUtf8(result);
+        if(driving_license == 'null'){
+          console.log('not licensed');
+          $('#is_check').attr('checked',false).trigger('change');
+        }
+        else {
+          console.log('licensed');
+          $('#is_check').attr('checked',true).trigger('change');
+          $('#driving').val(driving_license).trigger('change');
+          Citizen.getDriverExpiryDate(web3.fromAscii(data[0].nric),function(error,result){
+            if(error){
+              console.error(error);
+            }
+            else {
+              let expiry = new Date(web3.toUtf8(result));
+              var mm = expiry.getMonth() + 1;
+              var dd = expiry.getDate();
+              var yy = expiry.getFullYear();
+              if(mm < 10){
+                mm = '0'+mm;
+              }
+              if(dd < 10){
+                dd = '0'+dd;
+              }
+              var dt = yy + '-' + mm + '-' + dd;
+              $('#expiry_date').val(dt);
+            }}
+          );
+        }
+      }}
+    );
+
+    Citizen.getGender(web3.fromAscii(data[0].nric),function(error,result){
+      if(error){
+        console.error(error);
+      }
+      else {
+        var gender = web3.toUtf8(result);
+        if(gender == 'M'){
+          $('#male').attr('checked', true);
+        }
+        else {
+          $('#female').attr('checked', true);
+        }
+      }}
+    );
+
+    Citizen.getRace(web3.fromAscii(data[0].nric),function(error,result){
+      if(error){
+        console.error(error);
+      }
+      else {
+        var race = web3.toUtf8(result);
+        if(race == 'my' || race == 'cn' || race == 'in'){
+          $('#race').trigger('change');
+          $('#race').val(race);
+        }
+        else{
+          $('#race').val('ot');
+          $('#race').trigger('change');
+          $('#other').val(race);
+        }
+      }}
+    );
 
   });
 })

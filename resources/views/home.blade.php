@@ -15,8 +15,6 @@
           <thead class="thead-dark">
             <tr>
               <th scope="col">ID</th>
-              <th scope="col">Name</th>
-              <th scope="col">Email Address</th>
               <th scope="col">NRIC</th>
               <th scope="col">Action</th>
             </tr>
@@ -45,8 +43,6 @@ $(document).ready(function() {
         },
         'columns': [
             { 'data': 'id', 'name': 'id' },
-            { 'data': 'name', 'name': 'name' },
-            { 'data': 'email', 'name': 'email' },
             { 'data': 'nric', 'name': 'nric' },
             { 'data': 'action', 'defaultContent': '', 'orderable': false, 'searchable': false }
         ]

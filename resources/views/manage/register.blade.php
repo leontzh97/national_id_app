@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
       @if(session('success'))
       <div class="alert alert-success" role="alert">
-        {{ session('success') }}<br>NRIC: {{ session('nric') }}
+        {{ session('success') }}<br>NRIC: {{ session('nric') }}<br>ID: {{ session('id') }}
       </div>
       @endif
       @if(session('errors'))

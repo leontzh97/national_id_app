@@ -42,8 +42,8 @@ class CitizenController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|string|max:255|unique:citizenships',
-            'email' => 'required|string|email|max:255|unique:citizenships',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
             'race' => 'required|string|max:255',
             'gender' => 'required|string|max:255',
             'address' => 'required|string|max:500',
@@ -83,6 +83,7 @@ class CitizenController extends Controller
           $nric = Citizenship::generateNewNRIC($dob,$state,$request->gender);
 
           $postField = [
+            'nric' => $nric,
             'name' => $request->name,
             'email' => $request->email,
             'race' => $request->race,
@@ -93,16 +94,14 @@ class CitizenController extends Controller
             'state' => $request->state,
             'zip' => $request->zip,
             'date_of_birth' => $request->dob,
-            'nric' => $nric,
             'driving_license' => ($request->license) ? $request->license : null,
             'driver_expiry_date' => ($request->expiry_date) ? $request->expiry_date : null
           ];
 
-          Citizenship::saveNewCitizen($postField);
+          Citizenship::saveNewCitizen($nric);
 
-          return redirect()->back()->with([
-            'success' => 'Citizen has been created',
-            'nric' => $nric,
+          return redirect()->route('loading')->with([
+            'post' => json_encode($postField)
           ]);
         }
 
@@ -147,23 +146,44 @@ class CitizenController extends Controller
      */
     public function update(Request $request)
     {
-        $id = Citizenship::where(['id' => $request->nric])->first();
+        $validation = self::validator($request->all());
 
-        if(!empty($id)){
-          $id->email = ($request->email) ? $request->email : $id->email;
-          $id->gender = ($request->gender) ? $request->gender : $id->gender;
-          $id->address_1 = ($request->address) ? $request->address : $id->address_1;
-          $id->address_2 = ($request->address2) ? $request->address2 : $id->address_2;
-          $id->city = ($request->city) ? $request->city : $id->city;
-          $id->state = ($request->state) ? $request->state : $id->state;
-          $id->zip = ($request->zip) ? $request->zip : $id->zip;
-          $id->driving_license = ($request->license) ? $request->license : $id->driving_license;
-          $id->driver_expiry_date = ($request->expiry_date) ? $request->expiry_date : $id->driver_expiry_date;
-
-          $id->save();
-
-          return redirect()->home();
+        if($validation->fails()){
+          return redirect()->back()->withInput()->withErrors($validation->errors());
         }
+        else{
+
+          foreach(config('settings.state.all') as $k => $v){
+            if($request->state == $v){
+              $state = $k;
+            }
+          };
+
+          $dob = Carbon::parse($request->dob)->format('ymd');
+          $id = Citizenship::where(['id' => $request->nric])->first();
+
+          $postField = [
+            'nric' => $id->nric,
+            'name' => $request->name,
+            'email' => $request->email,
+            'race' => $request->race,
+            'gender' => $request->gender,
+            'address_1' => $request->address,
+            'address_2' => $request->address2,
+            'city' => $request->city,
+            'state' => $request->state,
+            'zip' => $request->zip,
+            'date_of_birth' => $request->dob,
+            'driving_license' => ($request->license) ? $request->license : null,
+            'driver_expiry_date' => ($request->expiry_date) ? $request->expiry_date : null
+          ];
+
+          return redirect()->route('loading')->with([
+            'update' => json_encode($postField)
+          ]);
+        }
+
+        return redirect()->back()->with('fail', 'Server error');
     }
 
     /**
@@ -212,8 +232,7 @@ class CitizenController extends Controller
     public function loadAllCitizen(Request $request)
     {
         return Citizenship::where('nric', 'LIKE', ('%'.$request->q.'%'))
-                ->orWhere('name', 'LIKE', ('%'.$request->q.'%'))
-                ->orderBy('name', 'asc')
+                ->orderBy('nric', 'desc')
                 ->paginate(10);
     }
 }

@@ -41,27 +41,15 @@ class Citizenship extends Model
   /**
    * Create a new citizen instance after a valid registration.
    *
-   * @param  array  $data
+   * @param  $data
    * @return \App\Citizenship
    */
   protected function saveNewCitizen($data)
   {
-      User::createNewUser($data['nric']);
+      User::createNewUser($data);
 
       return Citizenship::create([
-        'name' => $data['name'],
-        'email' => $data['email'],
-        'nric' => $data['nric'],
-        'race' => $data['race'],
-        'gender' => $data['gender'],
-        'address_1' => $data['address_1'],
-        'address_2' => $data['address_2'],
-        'city' => $data['city'],
-        'state' => $data['state'],
-        'zip' => $data['zip'],
-        'date_of_birth' => $data['date_of_birth'],
-        'driving_license' => $data['driving_license'],
-        'driver_expiry_date' => $data['driver_expiry_date']
+        'nric' => $data
       ]);
   }
 
@@ -148,8 +136,6 @@ class Citizenship extends Model
          {
              array_push($display, [
                  'id'                => $value->id,
-                 'name'              => $value->name,
-                 'email'             => $value->email,
                  'nric'              => $value->nric,
                  'action'            => '<button onClick="window.location.href=\''.route('nric.view',['id' => $value->id]).'\' " class="btn btn-ghost-primary"><i class="fa fa-eye"></i> View</button>'
              ]);
@@ -175,12 +161,10 @@ class Citizenship extends Model
        $offset = array_key_exists('offset', $filter) ? $filter['offset'] : null;
 
        return DB::table('citizenships')
-               ->select('citizenships.id', 'citizenships.name', 'citizenships.nric', 'citizenships.email')
+               ->select('citizenships.id', 'citizenships.nric')
                ->when($searchValue, function($query, $searchValue) {
                    return $query->where('citizenships.id', 'LIKE', ('%'.$searchValue.'%'))
-                                ->orWhere('citizenships.name', 'LIKE', ('%'.$searchValue.'%'))
-                                ->orWhere('citizenships.nric', 'LIKE', ('%'.$searchValue.'%'))
-                                ->orWhere('citizenships.email', 'LIKE', ('%'.$searchValue.'%'));
+                                ->orWhere('citizenships.nric', 'LIKE', ('%'.$searchValue.'%'));
                })
                ->when($sortBy, function($query, $sortBy) use ($sort) {
                    return $query->orderBy($sortBy, $sort);
