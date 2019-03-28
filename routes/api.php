@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::get('/profile/view/{nric}', 'ProfileController@view')->name('profile.view');
+Route::post('/profile', 'ProfileController@profile')->name('profile.post');

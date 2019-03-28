@@ -17,7 +17,7 @@
         <h1>{{ $action }} Citizen</h1>
       </div>
       <div class="col-md-12">
-        <form id="registration" method="post" action="{{ route('nric.store') }}">
+        <form id="registration" method="post" action="{{ route('nric.store') }}" onsubmit="return validateLogin()">
           @csrf
           <div class="card">
             <div class="card-body bg-light">
@@ -207,6 +207,17 @@ $(document).ready(function(){
 
   });
 
-})
+});
+
+function validateLogin()
+{
+  if(web3.eth.defaultAccount == null){
+    alert('Please login to your metamask.');
+    window.web3 = new Web3(ethereum);
+    ethereum.enable();
+    return false;
+  }
+  return true;
+};
 </script>
 @endsection

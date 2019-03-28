@@ -16,6 +16,7 @@
     <script src="{{ asset('js/coreui.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('js/dist/web3.min.js') }}"></script>
+    <script src="{{ asset('js/qr_packed.js') }}"></script>
     <!-- Fonts -->
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     <!-- Styles -->
@@ -33,6 +34,19 @@
             <script src="{{ asset('js/data-tables/jquery.dataTables.min.js') }}"></script>
             <script src="{{ asset('js/data-tables/dataTables.bootstrap4.min.js') }}"></script>
             <script src="{{ asset('js/select2.min.js') }}"></script>
+            @desktop
+            @if(Auth::user() == NULL || Auth::user()->role == 'admin')
+            <script>
+            if(web3.eth.defaultAccount == null)
+            {
+              if (window.ethereum) {
+                  window.web3 = new Web3(ethereum);
+                  ethereum.enable();
+              }
+            }
+            </script>
+            @endif
+            @enddesktop
         </main>
     </div>
 </body>

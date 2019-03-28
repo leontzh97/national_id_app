@@ -15,9 +15,19 @@ class CitizenController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function qrScan()
     {
-        //
+        return view('qrcode.scan');
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function qrDisplay()
+    {
+        return view('qrcode.display');
     }
 
     /**
@@ -97,8 +107,6 @@ class CitizenController extends Controller
             'driving_license' => ($request->license) ? $request->license : null,
             'driver_expiry_date' => ($request->expiry_date) ? $request->expiry_date : null
           ];
-
-          Citizenship::saveNewCitizen($nric);
 
           return redirect()->route('loading')->with([
             'post' => json_encode($postField)
@@ -221,6 +229,19 @@ class CitizenController extends Controller
           ];
 
           return response()->json($pageResult);
+        }
+    }
+
+    /**
+     * Records.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function register(Request $request)
+    {
+        if(Citizenship::saveNewCitizen($request->data['nric'])){
+            return redirect()->route('home');
         }
     }
 

@@ -3,18 +3,17 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-      loading...
+      <div class="col-md-8" id="loading">
+        <img src="{{ asset('images/loading.gif') }}" width="360" height="360" class="mx-auto d-block" alt="loading"><br><br>
+      </div>
+      <h2 id="proceed">Complete The Action In Metamask To Proceed...</h2>
     </div>
+    <form id="register-form" action="{{ route('nric.register',['data' => json_decode(session('post'),true)]) }}" method="POST" style="display: none;">
+        @csrf
+    </form>
 </div>
 
 <script>
-$(document).ready(function () {
-    // Handler for .ready() called.
-    window.setTimeout(function () {
-        location.href = "{{ route('home') }}";
-    }, 10000);
-});
-
 var CitizenContract = web3.eth.contract(
   {!! config('settings.contract.abi') !!}
 );
@@ -58,8 +57,14 @@ if(reg){
   Citizen.registerCitizen(ic, info, function(error,result){
     if(error){
       console.error(error);
+      $('#loading').hide();
+      $('#proceed').text('You Have Rejected The Transaction');
+      window.setTimeout(function () {
+          location.href = "{{ route('home') }}";
+      }, 1000);
     }
     else {
+      $('#register-form').submit();
       console.log(result);
     }
   });
@@ -92,9 +97,17 @@ if(up){
   Citizen.updateCitizen(ic, info, function(error,result){
     if(error){
       console.error(error);
+      $('#loading').hide();
+      $('#proceed').text('You Have Rejected The Transaction');
+      window.setTimeout(function () {
+          location.href = "{{ route('home') }}";
+      }, 1000);
     }
     else {
       console.log(result);
+      window.setTimeout(function () {
+          location.href = "{{ route('home') }}";
+      }, 1000);
     }
   });
 }
